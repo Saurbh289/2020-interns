@@ -5,19 +5,15 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 import json
 from datetime import date, datetime, timedelta
 import pandas as pd
+from matplotlib.widgets import MultiCursor
 
 with open("data.json") as f:
 	data = json.load(f)
 
-# all_dates=[]
-# for d in data['rates']:
-# 	all_dates.append(d)
-
-# all_dates.sort(key=lambda dat: datetime.strptime(dat, "%Y-%m-%d"))
-# print(all_dates)
 
 start_date=date(2019,1,1)
 end_date=date(2019,1,31)
@@ -36,9 +32,22 @@ for d in dates:
 		weekend.append(d)
 
 dates = list(set(dates) - set(weekend))
-print(len(dates),len(INR))
+dates.sort()
+# dates = pd.to_datetime(dates)
+# print(dates)
+INR = np.array(INR, dtype=float)
 
 df=pd.DataFrame({'Dates':dates,'INR':INR})
 print(df)
-plt.plot_date(dates,INR)
+
+fig, axes = plt.subplots()
+axes.plot(dates,INR, linestyle = 'solid')
+plt.ylim(np.round(np.min(INR)), np.round(np.max(INR)))
+
+plt.xticks([0,len(dates)], [dates[0],dates[-1]])
+plt.grid(axis='y' , linestyle='-', linewidth=0.5)
+
+# print(dates)
+# multi = MultiCursor(fig.canvas, axes, color='r', lw=1,horizOn=True, vertOn=True)
+
 plt.show()
